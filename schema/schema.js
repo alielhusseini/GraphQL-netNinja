@@ -1,4 +1,4 @@
-// in the schema folder you 1st create a schema with relationship(if any), then root queries
+// in the schema folder you 1st create a schema with relationship(if any), then root queries & mutations
 const graphql = require('graphql')
 const Book = require('../models/bookModel')
 const Author = require('../models/authorModel')
@@ -21,7 +21,7 @@ const BookType = new GraphQLObjectType({ // book schema
         },
         author: { // relationship
             type: AuthorType,
-            resolve(parent, args) {
+            resolve(parent, args) { // the parent here is the Book model, we don't need the authorId as in the model since we'll get the author as AuthorType instead
                 return Author.findById(parent.authorId)
             }
         }
@@ -56,7 +56,7 @@ const RootQuery = new GraphQLObjectType({ // root query (Read/Get)
             type: BookType,
             args: { id: { type: GraphQLID } },
             resolve(parent, args) { // code to get data from db / other source (sql or nosql)
-                return Book.findById(args.id)
+                return Book.findById(args.id) // the returned Book model will fill out the schema in the BookType and will be the parent
             }
         },
         author: { // querying a specific author
@@ -92,7 +92,7 @@ const Mutation = new GraphQLObjectType({ // for the 'CRUD' operations without th
             },
             resolve(parent, args) {
                 let author = new Author({ name: args.name, age: args.age })
-                return author.save()
+                return author.save() // the retured model will fill out the type that's chosen as its schema
             }
         },
         addBook: {
