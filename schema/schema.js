@@ -22,7 +22,7 @@ const BookType = new GraphQLObjectType({ // book schema
         author: { // relationship
             type: AuthorType,
             resolve(parent, args) {
-                return _.find(authors, { id: parent.authorId })
+                // return _.find(authors, { id: parent.authorId })
             }
         }
     })
@@ -43,7 +43,7 @@ const AuthorType = new GraphQLObjectType({ // author schema
         books: { // relationship
             type: new GraphQLList(BookType),
             resolve(parent, args) {
-                return _.filter(books, { authorId: parent.id })
+                // return _.filter(books, { authorId: parent.id })
             }
         }
     })
@@ -86,13 +86,25 @@ const Mutation = new GraphQLObjectType({ // for all the 'CRUD' operations
     fields: {
         addAuthor: {
             type: AuthorType, // what are we adding an author -> type is AuthorType created above
-            args: { 
+            args: {
                 name: { type: GraphQLString },
                 age: { type: GraphQLInt }
             },
-            resolve(parent,args) {
+            resolve(parent, args) {
                 let author = new Author({ name: args.name, age: args.age })
                 return author.save()
+            }
+        },
+        addBook: {
+            type: BookType,
+            args: {
+                name: { type: GraphQLString },
+                genre: { type: GraphQLString },
+                authorId: { type: GraphQLID },
+            },
+            resolve(parent, args) {
+                let book = new Book({ name: args.name, genre: args.genre, authorId: args.authorId })
+                return book.save()
             }
         }
     }
