@@ -1,10 +1,10 @@
-// in the schema folder you 1st create a schema, then relationship, then root queries
+// in the schema folder you 1st create a schema with relationship(if any), then root queries
 const graphql = require('graphql')
-const _ = require('lodash');
 const Book = require('../models/bookModel')
 const Author = require('../models/authorModel')
+    // const _ = require('lodash');
 
-const { GraphQLObjectType, GraphQLString, GraphQLSchema, GraphQLID, GraphQLInt, GraphQLList } = graphql; // for the schema structure
+const { GraphQLObjectType, GraphQLSchema, GraphQLNonNull, GraphQLString, GraphQLID, GraphQLInt, GraphQLList } = graphql; // for the schema structure
 
 // unlike models in mongoose here you do need to create an id for the schema
 const BookType = new GraphQLObjectType({ // book schema
@@ -87,8 +87,8 @@ const Mutation = new GraphQLObjectType({ // for the 'CRUD' operations without th
         addAuthor: {
             type: AuthorType, // what are we adding an author -> type is AuthorType created above
             args: {
-                name: { type: GraphQLString },
-                age: { type: GraphQLInt }
+                name: { type: new GraphQLNonNull(GraphQLString) },
+                age: { type: new GraphQLNonNull(GraphQLInt) }
             },
             resolve(parent, args) {
                 let author = new Author({ name: args.name, age: args.age })
@@ -98,9 +98,9 @@ const Mutation = new GraphQLObjectType({ // for the 'CRUD' operations without th
         addBook: {
             type: BookType,
             args: {
-                name: { type: GraphQLString },
-                genre: { type: GraphQLString },
-                authorId: { type: GraphQLID },
+                name: { type: new GraphQLNonNull(GraphQLString) },
+                genre: { type: new GraphQLNonNull(GraphQLString) },
+                authorId: { type: new GraphQLNonNull(GraphQLID) },
             },
             resolve(parent, args) {
                 let book = new Book({ name: args.name, genre: args.genre, authorId: args.authorId })
